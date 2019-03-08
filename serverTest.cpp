@@ -1,3 +1,7 @@
+// 可以通过close fd的方式来对epoll中的fd进行反注册，但要注意：
+// 如果epoll注册的fd所指文件有多个fd同时指向（因为dup或fork等原因），则需要close所有fd，才能反注册成功，否则epoll仍能监听到事件并返回在就绪列表中。如果你只close了epoll监听的那个fd，你将无法通过fd来处理该事件，甚至无法通过EPOLL_CTL_DEL反注册该事件。
+// 因此，最好是在close前，就EPOLL_CTL_DEL该事件。
+
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
